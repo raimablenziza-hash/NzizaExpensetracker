@@ -1,0 +1,80 @@
+let userPin = localStorage.getItem("pin") || null;
+function checkPin() {
+    if (!userPin) {
+        userPin = prompt("Set your 4-digit PIN:");
+        localStorage.setItem("pin", userPin);
+    } else {
+        let input = prompt("Enter your 4-digit PIN to access expenses:");
+        if (input !== userPin) {
+            alert("Wrong PIN! Access denied.");
+            location.reload();
+        }
+    }
+}
+checkPin();
+
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+let settings = JSON.parse(localStorage.getItem("settings")) || {
+  currency: "RWF",
+  budget: 0
+};
+
+document.getElementById("currency").value = settings.currency;
+document.getElementById("budget").value = settings.budget;
+
+function saveSettings() {
+  settings.currency = currency.value;
+  settings.budget = Number(budget.value);
+  localStorage.setItem("settings", JSON.stringify(settings));
+  render();
+}
+
+function addExpense() {
+  const amount = Number(document.getElementById("amount").value);
+  const category = document.getElementById("category").value;
+  const date = document.getElementById("date").value;
+  if (!amount || !date) return alert("Enter amount and date");
+
+  expenses.push({ amount, category, date });
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+  document.getElementById("amount").value = "";
+  render();
+}
+
+function deleteExpense(i) {
+  expenses.splice(i, 1);
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+  render();
+}
+
+function render() {
+  const list = document.getElementById("list");
+  const totalEl = document.getElementById("total");
+  const label = document.getElementById("currencyLabel");
+  const warning = document.getElementById("warning");
+
+  let total = 0;
+  let categories = {};
+  const month = new Date().toISOString().slice(0,7);
+  list.innerHTML = "";
+
+  expenses.forEach((e, i) => {
+    if (e.date.startsWith(month)) {
+      total += e.amount;
+      categories[e.category] = (categories[e.category] || 0) + e.amount;
+      list.innerHTML += `
+        <div>
+          ${e.category} - ${e.amount} ${settings.currency}
+          <span class="delete" onclick="deleteExpense(${i})"> ✖</span>
+        </div>`;
+    }
+  });
+
+  totalEl.innerText = total;
+  label.innerText = settings.currency;
+
+  warning.innerText = settings.budget && total > settings.budget
+    ? "⚠️ Budget exceeded"
+    : "";
+}
+render();
