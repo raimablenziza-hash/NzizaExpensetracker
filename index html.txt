@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<h1>💰 Expense Tracker</h1>
+
+<div class="card">
+  <h3>Settings</h3>
+  <select id="currency" onchange="saveSettings()">
+    <option value="RWF">RWF</option>
+    <option value="USD">USD</option>
+    <option value="AED">AED</option>
+  </select>
+  <input type="number" id="budget" placeholder="Monthly Budget" oninput="saveSettings()">
+</div>
+
+<div class="card">
+  <h3>Add Expense</h3>
+  <input type="number" id="amount" placeholder="Amount">
+  <select id="category">
+    <option>Food</option>
+    <option>Transport</option>
+    <option>Rent</option>
+    <option>Shopping</option>
+    <option>Utilities</option>
+    <option>Savings</option>
+    <option>Other</option>
+  </select>
+  <input type="date" id="date">
+  <button onclick="addExpense()">Add Expense</button>
+</div>
+
+<div class="card">
+  <h3>Total This Month: <span id="total">0</span> <span id="currencyLabel"></span></h3>
+  <p id="warning"></p>
+</div>
+
+<div class="card">
+  <div id="list"></div>
+</div>
+
+<canvas id="chart"></canvas>
+
+<script src="app.js"></script>
+</body>
+</html>
